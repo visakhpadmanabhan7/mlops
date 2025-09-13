@@ -1,0 +1,35 @@
+name: ML CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "ci_cd" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-train-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r 01_cicd_pipeline/requirements.txt
+
+    - name: Train model
+      run: |
+        python 01_cicd_pipeline/train.py
+
+    - name: Upload model artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: trained-model
+        path: 01_cicd_pipeline/artifacts/model.pkl
