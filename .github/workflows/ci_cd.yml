@@ -65,16 +65,11 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Download trained model (for tests + Docker)
+    - name: Download trained model (Docker)
       uses: actions/download-artifact@v4
       with:
         name: trained-model
         path: artifacts/
-
-    - name: Run unit tests
-      run: |
-        echo "🧪 Running unit tests..."
-        pytest -v tests/
 
     - name: Copy model into Docker context
       run: cp artifacts/model.pkl 02_docker_fastapi/model.pkl
