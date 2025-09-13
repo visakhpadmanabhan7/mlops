@@ -29,10 +29,7 @@ jobs:
         echo "🚀 Running basic lint check..."
         flake8 . --select=E9,F63,F7,F82 --show-source --statistics
 
-    - name: Run unit tests
-      run: |
-        echo "🧪 Running unit tests..."
-        pytest -v tests/
+
 
   train:
     runs-on: ubuntu-latest
@@ -68,11 +65,19 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v4
 
-    - name: Download trained model
+    - name: Download trained model (for tests + Docker)
       uses: actions/download-artifact@v4
       with:
         name: trained-model
-        path: 02_docker_fastapi/
+        path: artifacts/
+
+    - name: Run unit tests
+      run: |
+        echo "🧪 Running unit tests..."
+        pytest -v tests/
+
+    - name: Copy model into Docker context
+      run: cp artifacts/model.pkl 02_docker_fastapi/model.pkl
 
     - name: Build Docker image
       run: |
