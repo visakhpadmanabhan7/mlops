@@ -20,7 +20,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/mlops-model:latest 02_docker_fastapi
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/mlops--model:latest 02_docker_fastapi
 
     - name: Log in to DockerHub
       uses: docker/login-action@v2
