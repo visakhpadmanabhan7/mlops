@@ -33,3 +33,19 @@ jobs:
       with:
         name: trained-model
         path: artifacts/model.pkl
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-train-upload 
+
+    steps:
+    - name: Download model
+      uses: actions/download-artifact@v4
+      with:
+        name: trained-model
+        path: ./model
+
+    - name: Verify model exists
+      run: |
+        ls -lh ./model
+        echo "✅ Model available for deployment!"
