@@ -1,0 +1,21 @@
+{
+  "family": "mlops-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::094905625251:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "mlops-container",
+      "image": "094905625251.dkr.ecr.eu-central-1.amazonaws.com/mlops-model:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
