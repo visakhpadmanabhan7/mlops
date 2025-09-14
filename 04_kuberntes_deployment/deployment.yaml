@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+  labels:
+    app: fastapi-app
+spec:
+  replicas: 2                    # run 2 copies (Pods)
+  selector:
+    matchLabels:
+      app: fastapi-app
+  template:
+    metadata:
+      labels:
+        app: fastapi-app
+    spec:
+      containers:
+      - name: fastapi
+        image: visakhpadmanabhan7/mlops-model:latest
+        ports:
+        - containerPort: 8000    # matches EXPOSE in Dockerfile
+        readinessProbe:          # check app is ready before sending traffic
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:           # restart if app becomes unresponsive
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
