@@ -56,6 +56,36 @@ jobs:
       with:
         name: trained-model
         path: artifacts/model.pkl
+        
+  smoke-test:
+    runs-on: ubuntu-latest
+    needs: train
+    if: github.ref == 'refs/heads/ci_cd'
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Download trained model
+      uses: actions/download-artifact@v4
+      with:
+        name: trained-model
+        path: 02_docker_fastapi/
+
+    - name: Build Docker image
+      run: docker build -t mlops-model:test 02_docker_fastapi
+
+    - name: Run container
+      run: docker run -d -p 8000:8000 --name test_container mlops-model:test
+
+    - name: Smoke test API
+      run: |
+        sleep 5
+        curl -X POST "http://localhost:8000/predict" \
+          -H "Content-Type: application/json" \
+          -d '{"features":[5.1,3.5,1.4,0.2]}'
+
+    - name: Stop container
+      run: docker rm -f test_container
 
   deploy:
     runs-on: ubuntu-latest
