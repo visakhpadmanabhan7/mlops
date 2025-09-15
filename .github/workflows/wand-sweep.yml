@@ -3,7 +3,7 @@ name: Weights & Biases Sweep
 on:
   push:
     branches:
-      - wandb
+      - 06_weights_biases
   workflow_dispatch:
     inputs:
       count:
