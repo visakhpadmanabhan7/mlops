@@ -96,4 +96,51 @@ Think of it as grid-searching or auto-tuning:
 	•	❌ Slower per-step (needs optimization overhead).
 
 
-Check YAML file for the method.
+GitHub Actions Workflow
+	•	Added .github/workflows/wandb-sweep.yml.
+	•	Triggers:
+        •	On push to wandb branch.
+        •	Manual dispatch (play button in Actions tab).
+	•	Steps:
+        1.	Checkout repo.
+        2.	Setup Python (3.11).
+        3.	Install dependencies.
+        4.	Run W&B sweep agent.
+	•	Configurable workflow inputs:
+        •	count → number of runs (default: 20).
+        •	dataset → wine or iris.
+        •	sweep_file → path to sweep config file.
+
+5. Authentication
+	•	W&B API key stored securely in GitHub Secrets (WANDB_API_KEY).
+
+⸻
+
+🔹 Workflow in Action
+	1.	Push to wandb branch or manually trigger workflow.
+	2.	GitHub runner launches sweep agent.
+	3.	Each run:
+        •	Trains model with different hyperparams.
+        •	Logs metrics (accuracy, precision, recall, f1_score).
+	4.	Results visible on wandb.ai dashboard.
+
+🔹 Workflow in Action
+	1.	Trigger the workflow
+        •	Push to 06_weights_biases branch (dev mode)
+        •	Or manually trigger via Actions tab → Run workflow (choose branch & inputs).
+	2.	GitHub runner launches W&B sweep agent
+        •	Chooses project based on branch:
+        •	main → wine-quality-prod
+        •	feature branch → wine-quality-dev
+	3.	Each run in the sweep
+        •	Trains a model with different hyperparameters from sweep.yaml.
+        •	Logs metrics to W&B:
+        •	Accuracy ✅
+        •	Precision ✅
+        •	Recall ✅
+        •	F1-score ✅
+        •	Tagged with GitHub metadata (branch + commit SHA).
+        4.	View results in W&B dashboard
+        •	Dev runs and Prod runs stay separated.
+        •	Easy comparison of hyperparams across multiple runs.
+        •	Traceability: every run is linked back to the GitHub branch/commit.
