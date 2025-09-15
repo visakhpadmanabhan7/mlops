@@ -1,0 +1,28 @@
+name: MLflow Training Pipeline
+
+on:
+  push:
+    branches:
+      - mlflow
+
+jobs:
+  train-and-register:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r 05_mlflow_tracking/requirements.txt
+
+      - name: Run training script
+        run: python 05_mlflow_tracking/train_mlflow.py
+
+      - name: Register best model
+        run: python 05_mlflow_tracking/register_best.py
