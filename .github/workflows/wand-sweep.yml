@@ -1,0 +1,46 @@
+name: Weights & Biases Sweep
+
+on:
+  push:
+    branches:
+      - wandb
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "Number of sweep runs"
+        required: false
+        default: "20"
+      dataset:
+        description: "Dataset to train on (wine or iris)"
+        required: false
+        default: "wine"
+      sweep_file:
+        description: "Path to sweep config file"
+        required: false
+        default: "06_weights_biases/sweep.yaml"
+
+jobs:
+  wandb-sweep:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r 06_weights_biases/requirements.txt
+
+      - name: Run W&B Sweep Agent
+        env:
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+        run: |
+          cd 06_weights_biases
+          python train_wine_custom.py \
+            --dataset ${{ github.event.inputs.dataset }} \
+            --count ${{ github.event.inputs.count }} \
+            --sweep_file ${{ github.event.inputs.sweep_file }}
