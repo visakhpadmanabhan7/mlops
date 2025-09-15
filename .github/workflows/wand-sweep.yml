@@ -17,7 +17,7 @@ on:
       sweep_file:
         description: "Path to sweep config file"
         required: false
-        default: "06_weights_biases/sweep.yaml"
+        default: "sweep.yaml"
 
 jobs:
   wandb-sweep:
@@ -38,9 +38,18 @@ jobs:
       - name: Run W&B Sweep Agent
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          # 👇 Dynamic project selection based on branch
+          WANDB_PROJECT: ${{ github.ref_name == 'main' && 'wine-quality-prod' || 'wine-quality-dev' }}
+          # 👇 Also pass useful metadata for run naming
+          GITHUB_BRANCH: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
         run: |
           cd 06_weights_biases
+          echo "🔹 Branch: $GITHUB_BRANCH"
+          echo "🔹 Commit: $GITHUB_SHA"
+          echo "🔹 W&B Project: $WANDB_PROJECT"
+
           python train_wine_custom.py \
-            --dataset ${{ github.event.inputs.dataset }} \
-            --count ${{ github.event.inputs.count }} \
-            --sweep_file ${{ github.event.inputs.sweep_file }}
+            --dataset ${{ github.event.inputs.dataset || 'wine' }} \
+            --count ${{ github.event.inputs.count || '20' }} \
+            --sweep_file ${{ github.event.inputs.sweep_file || 'sweep.yaml' }}

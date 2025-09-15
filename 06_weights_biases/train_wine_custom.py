@@ -5,6 +5,7 @@ from sklearn.datasets import load_wine, load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import os
 
 def train():
     wandb.init(project="wine-quality-classifier")
@@ -48,5 +49,8 @@ if __name__ == "__main__":
     with open(args.sweep_file, "r") as f:
         sweep_config = yaml.safe_load(f)
 
-    sweep_id = wandb.sweep(sweep=sweep_config, project="wine-quality-classifier")
+    # 👇 Dynamically pick project from env (set in GitHub Actions)
+    project_name = os.getenv("WANDB_PROJECT", "wine-quality-classifier")
+
+    sweep_id = wandb.sweep(sweep=sweep_config, project=project_name)
     wandb.agent(sweep_id, function=train, count=args.count)
