@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - mlflow
-  schedule:
-    - cron: "*/3 * * * *"   # every 3 minutes
 
 jobs:
   train-and-register:
