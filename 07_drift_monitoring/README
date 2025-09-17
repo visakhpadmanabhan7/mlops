@@ -1,0 +1,102 @@
+Perfect timing 🚀 — now that you’ve done serving (FastAPI/K8s) and experiment tracking (MLflow + W&B), the next natural MLOps piece is monitoring & drift detection.
+
+⸻
+
+🔹 Why Monitoring Matters
+
+Once your model is deployed, you can’t just “set it and forget it.”
+You need to monitor for:
+	1.	Data Drift
+        •	The input data distribution changes compared to training data.
+        •	Example: Your training dataset had mostly European customers, but now you get lots of Asian customers.
+	2.	Prediction Drift
+        •	The model’s outputs shift over time.
+        •	Example: A classifier used to predict 50% “A” and 50% “B”, now it predicts 80% “B”.
+	3.	Concept Drift
+        •	The relationship between input features and target labels changes.
+        •	Example: In fraud detection, fraud patterns evolve over time.
+	4.	Performance Decay
+        •	Accuracy, precision, recall drop because model is outdated.
+
+⸻
+
+🔹 Tools We’ll Use
+	•	Evidently AI → Python library for drift detection, generating reports & dashboards.
+	•	Grafana + Prometheus → For real-time visualization & alerts (optional for later).
+	•	MLflow/W&B integration → You can log drift metrics alongside training/experiment metrics.
+
+⸻
+
+## 🔹 Tools Used
+- [Evidently](https://github.com/evidentlyai/evidently) → Drift detection, reports, dashboards.
+- Grafana + Prometheus → (optional) real-time visualization.
+- Integration with MLflow/W&B for logging drift metrics.
+
+---
+
+## 🔹 Files
+- `drift_detection.ipynb` → Notebook demo with Evidently.
+- `drift_detection.py` → Script version for automation (CI/CD).
+- `grafana_dashboard.json` → Example Grafana dashboard.
+- `requirements.txt` → Dependencies.
+
+---
+
+## 🔹 Quickstart
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+
+    ```
+2. Run the notebook or script to see drift detection in action.
+   ```bash
+   jupyter notebook drift_detection.ipynb
+   ```
+
+   python drift_detection.py
+   ```
+
+🔹 Example Workflow
+	1.	Collect a batch of new production data.
+	2.	Compare with training dataset using Evidently.
+	4.	Trigger alerts if drift exceeds threshold.
+	5.	(Optional) Push metrics into Grafana for live dashboards.
+
+🔹 Prometheus
+	•	An open-source monitoring system designed to collect time-series metrics.
+	•	Think of it as a database for metrics.
+	•	Your app exposes metrics (e.g., "accuracy=0.92", "drifted_columns=3") at an HTTP endpoint → Prometheus scrapes them and stores them over time.
+
+📊 ML Drift Monitoring with Evidently, Prometheus & Grafana
+
+This module demonstrates how to detect, expose, and visualize dataset drift in a machine learning pipeline using:
+	•	Evidently → Detects data drift between training (reference) and production data.
+	•	Prometheus → Scrapes drift metrics and stores them as time-series data.
+	•	Grafana → Visualizes drift metrics on live dashboards.
+
+⸻
+
+🔹 Workflow Overview
+	1.	Drift Detection (Python + Evidently)
+	•	Loads the Adult dataset.
+	•	Splits into reference data (training-like) and production data (simulated live input).
+	•	Runs an Evidently DataDriftPreset to compute:
+	•	Number of drifted columns
+	•	Share of drifted columns
+	•	Dataset drift flag (True/False)
+	•	Exposes results via Prometheus client (/metrics endpoint).
+	2.	Prometheus
+	•	Scrapes metrics every 15 seconds from the Python script.
+	•	Stores metrics in a local time-series database.
+	3.	Grafana
+	•	Connects to Prometheus as a data source.
+	•	Visualizes:
+	•	Time-series of ml_drifted_columns
+	•	Time-series of ml_share_drifted
+	•	Boolean drift flag (ml_dataset_drift)
+
+
+✅ In your setup:
+	•	Python drift monitor = custom exporter (metrics about ML drift).
+	•	Prometheus server = collector (scrapes exporters on schedule).
+	•	Grafana = visualizer (queries Prometheus to plot dashboards).
