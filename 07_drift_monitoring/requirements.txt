@@ -1,0 +1,6 @@
+pandas
+scikit-learn
+evidently==0.7.14
+mlflow
+wandb
+prometheus-client

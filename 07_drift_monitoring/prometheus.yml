@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 15s  # how often to scrape metrics
+
+scrape_configs:
+  - job_name: "ml_drift_monitor"
+    static_configs:
+      - targets: ["host.docker.internal:8000"]  # Mac/Windows
+        # if Linux, use "localhost:8000"
